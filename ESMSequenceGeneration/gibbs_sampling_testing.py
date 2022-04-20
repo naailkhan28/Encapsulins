@@ -14,7 +14,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model, alphabet = esm.pretrained.esm1b_t33_650M_UR50S()
 batch_converter = alphabet.get_batch_converter()
 
-#Use parallel model across multuple GPUs if available
+#Use parallel model across multiple GPUs if available
 if torch.cuda.device_count() > 1:
     print("Using ", torch.cuda.device_count(), "GPUs")
     model = nn.DataParallel(model)

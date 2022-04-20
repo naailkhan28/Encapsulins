@@ -2,7 +2,6 @@ from Bio.Align import PairwiseAligner, substitution_matrices
 from Bio import SeqIO
 from model_prediction import get_log_likelihoods
 from sequence_generation_tools import tokenize
-import esm
 
 #Given a query sequence, find the sequence with the highest similarity in a FASTA file
 #Similarity is calculated using pairwise alignment with BLOSUM62 scoring, gap open and extension penalties can be defined too
@@ -35,9 +34,10 @@ def get_max_sequence_similarity(query_sequence, database_file, gap_open_penalty=
     return(max_score, scores[max_score])
 
 #Calculate average per-token log likelihood for a generated sequence
-def get_average_log_likelihood(query_sequence, model, batch_converter):
+def get_average_log_likelihood(query_sequence, model, batch_converter, device):
 
     sequence_tokens = tokenize(query_sequence, batch_converter)
+    sequence_tokens = sequence_tokens.to(device)
     all_likelihoods = get_log_likelihoods(sequence_tokens, model)
 
     total_log_likelihood = 0.0

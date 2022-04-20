@@ -1,0 +1,36 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from sklearn.cluster import KMeans
+import pickle
+
+#Load representations from pickle - keys are accession and values are representations as numpy arrays
+representations_dict = pickle.load(open("ESM/encapsulin_embeddings.pkl", 'rb'))
+
+#Load all encapsulins dataframe to add embeddings to later
+all_encapsulins = pd.read_csv("Clustering Analysis/all_encapsulins.csv")
+
+#Load dict into a dataframe for convenience
+embedded_dataframe = pd.DataFrame.from_dict(representations_dict, orient="index")
+protein_vectors = embedded_dataframe.iloc[:, 1:-1]
+
+#PCA on ESM representations to reduce number of dimensions
+num_pca_components = 100
+pca = PCA(num_pca_components)
+protein_vectors_PCA = pca.fit_transform(protein_vectors)
+
+#t-SNE with 2 dimensions on the decomposed protein vectors
+tSNE = TSNE(n_components=2, learning_rate="auto", init="random", random_state=420)
+protein_vectors_tNE = tSNE.fit_transform(protein_vectors_PCA)
+
+plt.scatter(protein_vectors_tNE[:, 0], protein_vectors_tNE[:, 1], marker=".")
+plt.show()
+#Add t-SNE embeddings to original dataframe
+all_encapsulins["tSNE-x"] = protein_vectors_tNE[:, 0]
+all_encapsulins["tSNE-y"] = protein_vectors_tNE[:, 1]
+
+#Save dataframe to csv to prevent having to re-run t-SNE
+outfile = all_encapsulins.to_csv("Clustering Analysis/all_encapsulins_ESM_tSNE.csv")
+
+print(all_encapsulins.head())

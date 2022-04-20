@@ -1,0 +1,51 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.decomposition import PCA
+import pickle
+
+#Load existing encapsulin dataframe
+all_encapsulins = pd.read_csv("Clustering Analysis/all_encapsulins.csv")
+
+#Load representations from pickle - keys are accession and values are representations as numpy arrays
+representations_dict = pickle.load(open("ESM/encapsulin_embeddings.pkl", 'rb'))
+
+#Load dict into a dataframe for convenience
+embedded_dataframe = pd.DataFrame.from_dict(representations_dict, orient="index")
+protein_vectors = embedded_dataframe.iloc[:, 1:-1]
+
+#Try PCA with different numbers of components
+num_pca_components = 120
+pca = PCA(num_pca_components)
+pca.fit(protein_vectors)
+protein_vectors_PCA = pca.transform(protein_vectors)
+
+# #Setup plots
+# fig = plt.figure()
+# ax = fig.add_subplot(projection="3d")
+
+# #Plot first principal component against second principal component
+# sc = axs[0].scatter(protein_vectors_PCA[:,0], protein_vectors_PCA[:,1], marker='.')
+# axs[0].set_xlabel('PCA first principal component')
+# axs[0].set_ylabel('PCA second principal component')
+
+# #Plot fraction of explained variance for each principal component
+# scree_plot = axs[1].bar([i for i in range(len(pca.explained_variance_ratio_))], pca.explained_variance_ratio_)
+# axs[1].set_xlabel('Principal Component')
+# axs[1].set_ylabel('Fraction of Explained Variance')
+
+# #3D scatterplot of first three principal components
+# scatter = ax.scatter(protein_vectors_PCA[:,0], protein_vectors_PCA[:,1], protein_vectors_PCA[:,2], marker='.')
+# ax.set_xlabel('Principal Component 1')
+# ax.set_ylabel('Principal Component 2')
+# ax.set_zlabel('Principal Component 3')
+
+# plt.show()
+
+#Add PCA components to original dataframe
+for i in range(num_pca_components):
+    all_encapsulins[str(i)] = protein_vectors_PCA[:, i]
+
+#Save dataframe to csv to prevent having to re-run t-SNE
+outfile = all_encapsulins.to_csv("Clustering Analysis/all_encapsulins_ESM_PCA.csv")
+
+print(all_encapsulins.head())

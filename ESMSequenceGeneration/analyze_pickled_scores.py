@@ -20,19 +20,15 @@ min_similarity = max_likelihood[max_likelihood["Maximum Similarity"] < similarit
 
 sequences = min_similarity.index.to_list()
 
-for record in SeqIO.parse("Sequences/generated_1000sequences_pfuriosus_family4_seed.fasta", "fasta"):
-    if int(record.id) in sequences:
-        seq_record = SeqRecord(record.seq, record.id, description="")
+# for record in SeqIO.parse("Sequences/generated_1000sequences_pfuriosus_family4_seed.fasta", "fasta"):
+#     if int(record.id) in sequences:
+#         seq_record = SeqRecord(record.seq, record.id, description="")
 
-        outfile = SeqIO.write(seq_record, str(record.id) + ".fasta", "fasta")
-        print(str(record.id) + ".fasta")
+#         outfile = SeqIO.write(seq_record, str(record.id) + ".fasta", "fasta")
+#         print(str(record.id) + ".fasta")
+fig, ax = plt.subplots(1)
+sns.scatterplot(x=scores_dataframe["Model Log Likelihood"], y=scores_dataframe["Maximum Similarity"], ax=ax, s=10)
+ax.vlines(x=likelihood_mean + likelihood_std, ymin=scores_dataframe["Maximum Similarity"].min(), ymax=scores_dataframe["Maximum Similarity"].max())
+ax.hlines(y=similarity_mean - similarity_std, xmin=scores_dataframe["Model Log Likelihood"].min(), xmax=scores_dataframe["Model Log Likelihood"].max())
 
-# fix, axs = plt.subplots(1, 3)
-
-# sns.histplot(x=scores_dataframe["Model Log Likelihood"], ax=axs[0])
-# sns.histplot(x=scores_dataframe["Maximum Similarity"], ax=axs[1])
-
-# sns.scatterplot(x=scores_dataframe["Model Log Likelihood"], y=scores_dataframe["Maximum Similarity"], ax=axs[2], s=10)
-
-
-# plt.show()
+plt.show()

@@ -1,4 +1,3 @@
-from json import encoder
 from transformers import T5Tokenizer, T5Model
 import re
 import torch

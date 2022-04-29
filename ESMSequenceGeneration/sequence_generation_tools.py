@@ -57,3 +57,11 @@ def pad_sequence(sequence_tokens, max_length, alphabet):
     sequence_tokens = torch.cat((sequence_tokens, end_token_tensor), 1)
 
     return(sequence_tokens)
+
+#Remove illegal or rare characters from amino acid sequences
+def remove_illegal_chars(text):
+    text = text.replace("B", "N")
+    text = text.replace("Z", "Q")
+    text = text.replace("J", "I")
+    text = text.replace("X", "I")
+    return text

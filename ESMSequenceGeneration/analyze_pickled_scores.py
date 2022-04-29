@@ -5,30 +5,27 @@ import seaborn as sns
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
-scores = pickle.load(open("ESMSequenceGeneration/generated_encapsulin_scores.pkl", "rb"))
+all_generated_scores = {}
 
-scores_dataframe = pd.DataFrame.from_dict(scores, orient="index", columns = ["Model Log Likelihood", "Maximum Similarity", "Most Similar Sequence"])
+for i in range(4):
+    filename = f"ESMSequenceGeneration/Scores/generated_6k_v2_{i}.pkl"
 
-likelihood_mean = scores_dataframe["Model Log Likelihood"].mean()
-similarity_mean = scores_dataframe["Maximum Similarity"].mean()
+    current_score_dictionary = pickle.load(open(filename, "rb"))
 
-likelihood_std = scores_dataframe["Model Log Likelihood"].std()
-similarity_std = scores_dataframe["Maximum Similarity"].std()
+    for key, value in current_score_dictionary.items():
+        all_generated_scores[int(key) + (15000 * i)] = value
 
-max_likelihood = scores_dataframe[scores_dataframe["Model Log Likelihood"] > likelihood_mean + likelihood_std]
-min_similarity = max_likelihood[max_likelihood["Maximum Similarity"] < similarity_mean - similarity_std]
+generated_scores_dataframe = pd.DataFrame.from_dict(all_generated_scores, orient="index", columns = ["Model Log Likelihood", "Maximum Similarity", "Most Similar Sequence"])
 
-sequences = min_similarity.index.to_list()
+top10_likelihood = generated_scores_dataframe.sort_values(["Model Log Likelihood"], ascending=False)[:15].index.to_list()
+bottom10_likelihood = generated_scores_dataframe.sort_values(["Model Log Likelihood"])[:15].index.to_list()
+top10_similarity = generated_scores_dataframe.sort_values(["Maximum Similarity"], ascending=False)[:15].index.to_list()
+bottom10_similarity = generated_scores_dataframe.sort_values(["Maximum Similarity"])[:15].index.to_list()
 
-# for record in SeqIO.parse("Sequences/generated_1000sequences_pfuriosus_family4_seed.fasta", "fasta"):
-#     if int(record.id) in sequences:
-#         seq_record = SeqRecord(record.seq, record.id, description="")
+median_likelihood = generated_scores_dataframe.sort_values(["Model Log Likelihood"]).index.to_list()[30000]
+median_similarity = generated_scores_dataframe.sort_values(["Maximum Similarity"]).index.to_list()[30000]
 
-#         outfile = SeqIO.write(seq_record, str(record.id) + ".fasta", "fasta")
-#         print(str(record.id) + ".fasta")
-fig, ax = plt.subplots(1)
-sns.scatterplot(x=scores_dataframe["Model Log Likelihood"], y=scores_dataframe["Maximum Similarity"], ax=ax, s=10)
-ax.vlines(x=likelihood_mean + likelihood_std, ymin=scores_dataframe["Maximum Similarity"].min(), ymax=scores_dataframe["Maximum Similarity"].max())
-ax.hlines(y=similarity_mean - similarity_std, xmin=scores_dataframe["Model Log Likelihood"].min(), xmax=scores_dataframe["Model Log Likelihood"].max())
+all_sequences = top10_likelihood + bottom10_likelihood + top10_similarity + bottom10_similarity
 
-plt.show()
+all_sequences.append(median_likelihood)
+all_sequences.append(median_similarity)

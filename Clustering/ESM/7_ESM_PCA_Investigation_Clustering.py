@@ -5,7 +5,7 @@ from Bio import SeqIO
 import numpy as np
 
 #Load saved PCA data from file
-all_encapsulins = pd.read_csv("Clustering Analysis/all_encapsulins_ESM_PCA.csv")
+all_encapsulins = pd.read_csv("Clustering/all_encapsulins_ESM_PCA.csv")
 
 #Cluster dataset at 90% sequence identity to remove redundancy
 accessions = [record.id for record in SeqIO.parse("Sequences/all_90percent_clustered/output.fasta", "fasta")]

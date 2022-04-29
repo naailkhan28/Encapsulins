@@ -17,7 +17,7 @@ for i, record in enumerate(SeqIO.parse("Sequences/generated_1000sequences_pfurio
     print(f"Iteration {i}")
     sequence = str(record.seq)
     id = int(record.id)
-
+    
     similarity, accession = get_max_sequence_similarity(sequence, "Sequences/all_90percent_clustered/output.fasta")
     likelihood = get_average_log_likelihood(sequence, model, batch_converter, device)
 

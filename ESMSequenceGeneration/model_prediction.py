@@ -54,7 +54,8 @@ def generate_sequence_from_seed(model, alphabet, sequence_tokens, temperature=1)
     iteration = 1
 
     while masks:
-        print("Iteration: {}, Number of mask tokens remaining: {}".format(iteration, len(masks)))
+        if iteration % 20 == 0:
+            print("Iteration: {}, Number of mask tokens remaining: {}".format(iteration, len(masks)))
         index = np.random.choice(masks)
 
         probabilities = get_probabilities(sequence_tokens, index, model, temperature=temperature)
@@ -74,7 +75,6 @@ def fill_unknown_positions(model, alphabet, sequence_tokens):
     iteration = 1
 
     while unknowns:
-        print("Iteration: {}, Number of unknown tokens remaining: {}".format(iteration, len(unknowns)))
         index = np.random.choice(unknowns)
 
         probabilities = get_probabilities(sequence_tokens, index, model)

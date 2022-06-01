@@ -1,25 +1,27 @@
 #Imports
-from numpy import amin
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 
 #Load previously processed dataframe
+all_encapsulins = pd.read_csv("Clustering/all_encapsulins_processed_manualfeatures.csv")
 
-all_encapsulins = pd.read_csv("Clustering Analysis/all_encapsulins_processed.csv")
+notfamily1 = all_encapsulins[all_encapsulins["Family"] != "1"]
 
-amino_acids = "ACDEFGHIKLMNPQRSTVWY"
+notfamily1 = notfamily1[~notfamily1["Length"].between(250, 300)]
 
-aa_frequency_column_titles = [residue + "_frequency" for residue in amino_acids]
+ids = notfamily1["Enc Uniprot Accession"].to_list()
+sequences = notfamily1["Sequence"].to_list()
 
-fig, axs = plt.subplots(5, 4)
+records = []
 
-i = 0
+for id, sequence in zip(ids, sequences):
+    id = f"natural_{id}"
+    record = SeqRecord(Seq(str(sequence)), id=id, description="")
 
-for row in axs:
-    for col in row:
-        sns.histplot(all_encapsulins[aa_frequency_column_titles[i]], ax=col)
-        i += 1
+    records.append(record)
 
-plt.tight_layout()       
-plt.show()
+outfile = SeqIO.write(records, "DiscriminatorModel/data/sequences/validation_natural_sequences.fasta", "fasta")

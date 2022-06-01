@@ -1,5 +1,4 @@
 #Imports
-from numpy import column_stack
 import pandas as pd
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 import matplotlib.pyplot as plt

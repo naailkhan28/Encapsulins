@@ -3,7 +3,7 @@ import os
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-path = "ESMInverseFolding/data/HMMs/scores/q_thermotolerans_t4_generated/t4_phmmer/"
+path = "ESMInverseFolding/data/HMMs/scores/a_hydrophila_bmc_h_generated/"
 all_files=os.listdir(path)
 
 hmm_scores = {}
@@ -24,7 +24,7 @@ for i, file in enumerate(all_files):
 hmm_dataframe = pd.DataFrame.from_dict(hmm_scores, orient="index", columns=["id", "HMM E-Value", "HMM Score"])
 
 print(hmm_dataframe)
-outfile = hmm_dataframe.to_csv("ESMInverseFolding/data/HMMs/scores/t4_phmmer_hmm_scores.csv")
+outfile = hmm_dataframe.to_csv("ESMInverseFolding/data/HMMs/scores/bmc_h_hmm_scores.csv")
 
-sns.histplot(data=hmm_dataframe, x="HMM E-Value")
-plt.show()
+#sns.histplot(data=hmm_dataframe, x="HMM E-Value")
+#plt.show()

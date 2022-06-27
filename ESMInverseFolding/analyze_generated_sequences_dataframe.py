@@ -5,10 +5,9 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from scoring_functions import get_instability_index
-import more_itertools as mit
 
 #Load dataframe
-sequences_dataframe = pd.read_csv("ESMInverseFolding/data/temperature_tests_seqs_dataframe.csv")
+sequences_dataframe = pd.read_csv("ESMInverseFolding/data/BMC_H_sequences_dataframe.csv")
 sequences_dataframe = sequences_dataframe.iloc[:, 1:]
 
 # upper_bounds = range(55, 20, -5)
@@ -27,7 +26,5 @@ sequences_dataframe = sequences_dataframe.iloc[:, 1:]
 
 #     print(sequence_subset)
 
-sequences_dataframe["Instability Index"] = sequences_dataframe["Sequence"].apply(get_instability_index)
-sns.histplot(data=sequences_dataframe, x="Instability Index")
-plt.vlines(x=40, ymin=0, ymax=500, color="black", linestyles="dashed")
+sns.histplot(data=sequences_dataframe, x="% Identity")
 plt.show()
